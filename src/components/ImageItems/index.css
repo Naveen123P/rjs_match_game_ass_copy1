@@ -1,0 +1,9 @@
+button{
+    background-color: transparent;
+    padding: 2px;
+    border: none;
+}
+.img-style{
+    height: 100px;
+    width: 100px;
+}
