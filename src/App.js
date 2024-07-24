@@ -299,7 +299,7 @@ class App extends Component {
 
   render() {
     const {isTimerRunning, activeTab, score} = this.state
-    const {filteredImageList} = this.getFilteredImages()
+    const filteredImageList = this.getFilteredImages()
     return (
       <>
         <Header score={score} />
