@@ -16,4 +16,5 @@ const ImageItems = props => {
     </li>
   )
 }
+
 export default ImageItems

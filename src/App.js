@@ -249,25 +249,25 @@ const imagesList = [
     category: 'FRUIT',
   },
 ]
-let randomThumbnail
 
+let randomImgIndex = Math.floor(Math.random() * imagesList.length)
+let randomThumbnail = imagesList[randomImgIndex].thumbnailUrl
+const timeLimit = 60
 // Replace your code here
 class App extends Component {
   state = {
     isTimerRunning: true,
     activeTab: tabsList[0].tabId,
     score: 0,
+    initialTime: timeLimit,
+    palyAgain: false,
   }
 
-  renderRandomThumbnail = () => {
-    const randomImgIndex = Math.floor(Math.random() * imagesList.length)
-    randomThumbnail = imagesList[randomImgIndex].thumbnailUrl
-    return (
-      <div className="thumbnail">
-        <img src={randomThumbnail} alt="thumbnail" className="thumbnail-img" />
-      </div>
-    )
-  }
+  renderRandomThumbnail = () => (
+    <>
+      <img src={randomThumbnail} alt="thumbnail" className="thumbnail-img" />
+    </>
+  )
 
   updateActiveTabId = id => {
     this.setState({activeTab: id})
@@ -286,24 +286,71 @@ class App extends Component {
       this.setState(prevState => ({
         score: prevState.score + 1,
       }))
+    } else {
+      this.setState({isTimerRunning: false})
     }
+    randomImgIndex = Math.floor(Math.random() * imagesList.length)
+    randomThumbnail = imagesList[randomImgIndex].thumbnailUrl
   }
 
   onClickReset = () => {
+    console.log('reset clicked')
     this.setState({
+      initialTime: timeLimit,
       isTimerRunning: true,
       activeTab: tabsList[0].tabId,
       score: 0,
+      palyAgain: true,
     })
   }
 
+  timeUp = () => {
+    this.setState({isTimerRunning: false})
+  }
+
+  renderScoreCardView = () => {
+    const {score} = this.state
+    return (
+      <div className="palyGround-bg">
+        <div className="card-container">
+          <img
+            src="https://assets.ccbp.in/frontend/react-js/match-game-trophy.png"
+            alt="trophy"
+            className="trophy-img"
+          />
+          <div className="score-container">
+            <h1 className="your-score">Your Score</h1>
+            <p className="score-style">{score}</p>
+            <button
+              type="button"
+              className="reset-button"
+              onClick={this.onClickReset}
+            >
+              <img
+                src="https://assets.ccbp.in/frontend/react-js/match-game-play-again-img.png"
+                alt="reset"
+                className="reset-img"
+              />
+              <p className="reset-text">PLAY AGAIN</p>
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   render() {
-    const {isTimerRunning, activeTab, score} = this.state
+    const {isTimerRunning, activeTab, score, initialTime} = this.state
     const filteredImageList = this.getFilteredImages()
     return (
       <>
-        <Header score={score} />
-        {isTimerRunning ? (
+        <Header
+          score={score}
+          isTimerRunning={isTimerRunning}
+          timeUp={this.timeUp}
+          initialTime={initialTime}
+        />
+        {isTimerRunning && (
           <div className="palyGround-bg">
             <div className="random-thumbnail">
               {this.renderRandomThumbnail()}
@@ -318,7 +365,12 @@ class App extends Component {
                 />
               ))}
             </ul>
-            <ul className="img-container">
+            <ul className="img-container image-wrap">
+              <img
+                src={imagesList[0].imageUrl}
+                alt="match"
+                className="dummy-img"
+              />
               {filteredImageList.map(eachItem => (
                 <ImageItems
                   key={eachItem.id}
@@ -328,31 +380,8 @@ class App extends Component {
               ))}
             </ul>
           </div>
-        ) : (
-          <div className="palyGround-bg">
-            <div className="card-container">
-              <img
-                src="https://assets.ccbp.in/frontend/react-js/match-game-trophy.png"
-                alt="trophy"
-                className="trophy-img"
-              />
-              <h1 className="your-score">Your Score</h1>
-              <p className="score-style">{score}</p>
-              <button
-                type="button"
-                className="reset-button"
-                onClick={this.onClickReset}
-              >
-                <img
-                  src="https://assets.ccbp.in/frontend/react-js/match-game-play-again-img.png"
-                  alt="reset"
-                  className="reset-img"
-                />
-                <p className="reset-text">PLAY AGAIN</p>
-              </button>
-            </div>
-          </div>
         )}
+        {!isTimerRunning && this.renderScoreCardView()}
       </>
     )
   }
