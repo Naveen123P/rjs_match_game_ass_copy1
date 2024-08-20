@@ -5,13 +5,13 @@ const ImageItems = props => {
   const {imageUrl, thumbnailUrl} = imageDetails
 
   const onClickedImage = () => {
-    getClickedImageId(thumbnailUrl)
+    getClickedImageId(imageUrl)
   }
 
   return (
     <li className="img-container">
       <button type="button" onClick={onClickedImage}>
-        <img src={imageUrl} alt="match" className="img-style" />
+        <img src={thumbnailUrl} alt="thumbnail" className="img-style" />
       </button>
     </li>
   )

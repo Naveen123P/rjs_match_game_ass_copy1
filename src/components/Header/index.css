@@ -16,6 +16,7 @@
   justify-content: space-between;
   width: 170px;
   height: 100%;
+  list-style-type: none;
 }
 .score-element {
   color: white;

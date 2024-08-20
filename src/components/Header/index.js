@@ -47,8 +47,8 @@ class Header extends Component {
 
   render() {
     const {initialTime, isTimerRunning} = this.state
-    console.log(isTimerRunning)
-    const {score} = this.props
+    const {score, palyAgain} = this.props
+    console.log(isTimerRunning, palyAgain)
     return (
       <div className="header-bg">
         <div className="img-container">
@@ -58,13 +58,13 @@ class Header extends Component {
             className="website-logo"
           />
         </div>
-        <div className="score-timer-container">
-          <div className="score-container">
+        <ul className="score-timer-container">
+          <li className="score-container">
             <p className="score-element">
               Score: <span className="orange-text">{score}</span>
             </p>
-          </div>
-          <div className="timer-container">
+          </li>
+          <li className="timer-container">
             <img
               src="https://assets.ccbp.in/frontend/react-js/match-game-timer-img.png"
               alt="timer"
@@ -73,8 +73,8 @@ class Header extends Component {
             <p className="timer-element score-element orange-text">
               {initialTime} sec
             </p>
-          </div>
-        </div>
+          </li>
+        </ul>
       </div>
     )
   }

@@ -251,7 +251,7 @@ const imagesList = [
 ]
 
 let randomImgIndex = Math.floor(Math.random() * imagesList.length)
-let randomThumbnail = imagesList[randomImgIndex].thumbnailUrl
+let randomThumbnail = imagesList[randomImgIndex].imageUrl
 const timeLimit = 60
 // Replace your code here
 class App extends Component {
@@ -261,13 +261,17 @@ class App extends Component {
     score: 0,
     initialTime: timeLimit,
     palyAgain: false,
+    randomImageUrl: imagesList[0].imageUrl,
   }
 
-  renderRandomThumbnail = () => (
-    <>
-      <img src={randomThumbnail} alt="thumbnail" className="thumbnail-img" />
-    </>
-  )
+  renderRandomThumbnail = () => {
+    const {randomImageUrl} = this.state
+    return (
+      <>
+        <img src={randomImageUrl} alt="match" className="thumbnail-img" />
+      </>
+    )
+  }
 
   updateActiveTabId = id => {
     this.setState({activeTab: id})
@@ -281,16 +285,18 @@ class App extends Component {
     return filteredImages
   }
 
-  getClickedImageId = thumbnailUrl => {
-    if (thumbnailUrl === randomThumbnail) {
+  getClickedImageId = imageUrl => {
+    const {randomImageUrl} = this.state
+    randomImgIndex = Math.floor(Math.random() * imagesList.length)
+    randomThumbnail = imagesList[randomImgIndex].imageUrl
+    if (imageUrl === randomImageUrl) {
       this.setState(prevState => ({
         score: prevState.score + 1,
+        randomImageUrl: randomThumbnail,
       }))
     } else {
-      this.setState({isTimerRunning: false})
+      this.timeUp()
     }
-    randomImgIndex = Math.floor(Math.random() * imagesList.length)
-    randomThumbnail = imagesList[randomImgIndex].thumbnailUrl
   }
 
   onClickReset = () => {
@@ -301,6 +307,7 @@ class App extends Component {
       activeTab: tabsList[0].tabId,
       score: 0,
       palyAgain: true,
+      randomImageUrl: imagesList[0].imageUrl,
     })
   }
 
@@ -319,7 +326,7 @@ class App extends Component {
             className="trophy-img"
           />
           <div className="score-container">
-            <h1 className="your-score">Your Score</h1>
+            <p className="your-score">Your Score</p>
             <p className="score-style">{score}</p>
             <button
               type="button"
@@ -340,8 +347,15 @@ class App extends Component {
   }
 
   render() {
-    const {isTimerRunning, activeTab, score, initialTime} = this.state
+    const {
+      isTimerRunning,
+      activeTab,
+      score,
+      initialTime,
+      palyAgain,
+    } = this.state
     const filteredImageList = this.getFilteredImages()
+    console.log(isTimerRunning)
     return (
       <>
         <Header
@@ -349,6 +363,7 @@ class App extends Component {
           isTimerRunning={isTimerRunning}
           timeUp={this.timeUp}
           initialTime={initialTime}
+          palyAgain={palyAgain}
         />
         {isTimerRunning && (
           <div className="palyGround-bg">
@@ -366,11 +381,6 @@ class App extends Component {
               ))}
             </ul>
             <ul className="img-container image-wrap">
-              <img
-                src={imagesList[0].imageUrl}
-                alt="match"
-                className="dummy-img"
-              />
               {filteredImageList.map(eachItem => (
                 <ImageItems
                   key={eachItem.id}
