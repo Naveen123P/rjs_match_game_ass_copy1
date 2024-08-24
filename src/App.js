@@ -249,7 +249,7 @@ const imagesList = [
     category: 'FRUIT',
   },
 ]
-
+let timerId
 let randomImgIndex = Math.floor(Math.random() * imagesList.length)
 let randomThumbnail = imagesList[randomImgIndex].imageUrl
 const timeLimit = 60
@@ -260,8 +260,57 @@ class App extends Component {
     activeTab: tabsList[0].tabId,
     score: 0,
     initialTime: timeLimit,
-    palyAgain: false,
     randomImageUrl: imagesList[0].imageUrl,
+  }
+
+  componentDidMount() {
+    console.log('componentDidMount')
+    this.startTimer()
+  }
+
+  componentDidUpdate() {
+    const {isTimerRunning} = this.state
+    if (isTimerRunning === false) {
+      clearInterval(timerId)
+    }
+  }
+
+  componentWillUnmount() {
+    console.log('componentWillUnmount')
+    clearInterval(timerId)
+    this.setState({initialTime: timeLimit})
+  }
+
+  startTimer = () => {
+    timerId = setInterval(this.updateTime, 1000)
+  }
+
+  onClickReset = () => {
+    console.log('reset clicked')
+    this.setState(
+      {
+        initialTime: timeLimit,
+        isTimerRunning: true,
+        activeTab: tabsList[0].tabId,
+        score: 0,
+        randomImageUrl: imagesList[0].imageUrl,
+      },
+      this.startTimer,
+    )
+  }
+
+  timeUp = () => {
+    this.setState({isTimerRunning: false})
+  }
+
+  updateTime = () => {
+    const {initialTime, isTimerRunning} = this.state
+    if (initialTime > 0 && isTimerRunning) {
+      this.setState(prevState => ({initialTime: prevState.initialTime - 1}))
+    } else {
+      this.timeUp()
+      clearInterval(timerId)
+    }
   }
 
   renderRandomThumbnail = () => {
@@ -299,22 +348,6 @@ class App extends Component {
     }
   }
 
-  onClickReset = () => {
-    console.log('reset clicked')
-    this.setState({
-      initialTime: timeLimit,
-      isTimerRunning: true,
-      activeTab: tabsList[0].tabId,
-      score: 0,
-      palyAgain: true,
-      randomImageUrl: imagesList[0].imageUrl,
-    })
-  }
-
-  timeUp = () => {
-    this.setState({isTimerRunning: false})
-  }
-
   renderScoreCardView = () => {
     const {score} = this.state
     return (
@@ -347,24 +380,12 @@ class App extends Component {
   }
 
   render() {
-    const {
-      isTimerRunning,
-      activeTab,
-      score,
-      initialTime,
-      palyAgain,
-    } = this.state
+    const {isTimerRunning, activeTab, score, initialTime} = this.state
     const filteredImageList = this.getFilteredImages()
     console.log(isTimerRunning)
     return (
       <>
-        <Header
-          score={score}
-          isTimerRunning={isTimerRunning}
-          timeUp={this.timeUp}
-          initialTime={initialTime}
-          palyAgain={palyAgain}
-        />
+        <Header score={score} initialTime={initialTime} />
         {isTimerRunning && (
           <div className="palyGround-bg">
             <div className="random-thumbnail">

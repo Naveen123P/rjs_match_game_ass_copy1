@@ -94,6 +94,7 @@ body {
 .thumbnail-img {
   height: 100%;
   width: 100%;
+  padding-top: 10%;
 }
 .trophy-img {
   height: 40%;
@@ -124,5 +125,8 @@ body {
   }
   .trophy-img {
     margin-top: 90xp;
+  }
+  .tabs-container {
+    padding-bottom: 1rem;
   }
 }
